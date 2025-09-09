@@ -1,15 +1,100 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DeliveryRequest } from '../types';
 import { categories } from '../data/categories';
+import { getDeliveryRequests, updateRequestStatus } from '../services/firebase';
 
-interface AdminDashboardProps {
-  requests: DeliveryRequest[];
-  onUpdateStatus: (id: string, status: DeliveryRequest['status']) => void;
-}
-
-const AdminDashboard: React.FC<AdminDashboardProps> = ({ requests, onUpdateStatus }) => {
+const AdminDashboard: React.FC = () => {
+  const [requests, setRequests] = useState<DeliveryRequest[]>([]);
   const [filter, setFilter] = useState<'all' | DeliveryRequest['status']>('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadRequests();
+  }, []);
+
+  const loadRequests = async () => {
+    try {
+      setLoading(true);
+      const fetchedRequests = await getDeliveryRequests();
+      setRequests(fetchedRequests);
+    } catch (error) {
+      console.error('Error loading requests:', error);
+      showErrorMessage('Erreur lors du chargement des demandes');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdateStatus = async (id: string, status: DeliveryRequest['status']) => {
+    try {
+      await updateRequestStatus(id, status);
+      
+      // Update local state
+      setRequests(prev => 
+        prev.map(request => 
+          request.id === id 
+            ? { ...request, status, updatedAt: new Date() }
+            : request
+        )
+      );
+
+      showSuccessMessage('Statut mis à jour avec succès!');
+    } catch (error) {
+      console.error('Error updating status:', error);
+      showErrorMessage('Erreur lors de la mise à jour du statut');
+    }
+  };
+
+  const showSuccessMessage = (message: string) => {
+    const successMessage = document.createElement('div');
+    successMessage.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300';
+    successMessage.innerHTML = `
+      <div class="flex items-center">
+        <i class="bi bi-check-circle mr-2"></i>
+        <span>${message}</span>
+      </div>
+    `;
+    document.body.appendChild(successMessage);
+    
+    window.setTimeout(() => {
+      successMessage.style.transform = 'translateX(0)';
+    }, 100);
+    
+    window.setTimeout(() => {
+      successMessage.style.transform = 'translateX(100%)';
+      window.setTimeout(() => {
+        if (document.body.contains(successMessage)) {
+          document.body.removeChild(successMessage);
+        }
+      }, 300);
+    }, 3000);
+  };
+
+  const showErrorMessage = (message: string) => {
+    const errorMessage = document.createElement('div');
+    errorMessage.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300';
+    errorMessage.innerHTML = `
+      <div class="flex items-center">
+        <i class="bi bi-exclamation-triangle mr-2"></i>
+        <span>${message}</span>
+      </div>
+    `;
+    document.body.appendChild(errorMessage);
+    
+    window.setTimeout(() => {
+      errorMessage.style.transform = 'translateX(0)';
+    }, 100);
+    
+    window.setTimeout(() => {
+      errorMessage.style.transform = 'translateX(100%)';
+      window.setTimeout(() => {
+        if (document.body.contains(errorMessage)) {
+          document.body.removeChild(errorMessage);
+        }
+      }, 300);
+    }, 3000);
+  };
 
   const filteredRequests = requests.filter(request => {
     const matchesFilter = filter === 'all' || request.status === filter;
@@ -64,11 +149,33 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ requests, onUpdateStatu
 
   const stats = getStats();
 
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto p-6">
+        <div className="flex items-center justify-center min-h-96">
+          <div className="text-center">
+            <i className="bi bi-arrow-clockwise animate-spin text-4xl text-primary-500 mb-4"></i>
+            <p className="text-gray-600">Chargement des demandes...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-7xl mx-auto p-6">
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Tableau de Bord</h2>
-        <p className="text-gray-600">Gérez toutes les demandes de livraison</p>
+      <div className="mb-8 flex items-center justify-between">
+        <div>
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">Tableau de Bord</h2>
+          <p className="text-gray-600">Gérez toutes les demandes de livraison</p>
+        </div>
+        <button
+          onClick={loadRequests}
+          className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors duration-300"
+        >
+          <i className="bi bi-arrow-clockwise mr-2"></i>
+          Actualiser
+        </button>
       </div>
 
       {/* Statistics Cards */}
@@ -231,7 +338,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ requests, onUpdateStatu
                     {(['pending', 'finding', 'delivering', 'completed'] as const).map((status) => (
                       <button
                         key={status}
-                        onClick={() => onUpdateStatus(request.id, status)}
+                        onClick={() => handleUpdateStatus(request.id, status)}
                         disabled={request.status === status}
                         className={`w-full px-4 py-2 rounded-lg font-medium transition-all duration-300 flex items-center justify-center ${
                           request.status === status

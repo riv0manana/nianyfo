@@ -1,100 +1,46 @@
 import React, { useState, useEffect } from 'react';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Header from './components/Header';
 import RequestForm from './components/RequestForm';
 import AdminDashboard from './components/AdminDashboard';
+import LoginForm from './components/LoginForm';
 import Footer from './components/Footer';
-import { DeliveryRequest } from './types';
 
-function App() {
+function AppContent() {
   const [currentView, setCurrentView] = useState<'user' | 'admin'>('user');
-  const [requests, setRequests] = useState<DeliveryRequest[]>([]);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const { user, loading } = useAuth();
 
-  // Load requests from localStorage on component mount
-  useEffect(() => {
-    const savedRequests = localStorage.getItem('antalaha-delivery-requests');
-    if (savedRequests) {
-      try {
-        const parsedRequests = JSON.parse(savedRequests).map((req: any) => ({
-          ...req,
-          createdAt: new Date(req.createdAt),
-          updatedAt: new Date(req.updatedAt)
-        }));
-        setRequests(parsedRequests);
-      } catch (error) {
-        console.error('Erreur lors du chargement des demandes:', error);
-      }
-    }
-  }, []);
-
-  // Save requests to localStorage whenever requests change
-  useEffect(() => {
-    localStorage.setItem('antalaha-delivery-requests', JSON.stringify(requests));
-  }, [requests]);
-
-  const handleSubmitRequest = (requestData: Omit<DeliveryRequest, 'id' | 'createdAt' | 'updatedAt'>) => {
-    const newRequest: DeliveryRequest = {
-      ...requestData,
-      id: `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-
-    setRequests(prev => [newRequest, ...prev]);
-    
-    // Show success message
-    const successMessage = document.createElement('div');
-    successMessage.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300';
-    successMessage.innerHTML = `
-      <div class="flex items-center">
-        <i class="bi bi-check-circle mr-2"></i>
-        <span>Demande envoyée avec succès!</span>
-      </div>
-    `;
-    document.body.appendChild(successMessage);
-    
-    window.setTimeout(() => {
-      successMessage.style.transform = 'translateX(0)';
-    }, 100);
-    
-    window.setTimeout(() => {
-      successMessage.style.transform = 'translateX(100%)';
-      window.setTimeout(() => {
-        document.body.removeChild(successMessage);
-      }, 300);
-    }, 3000);
+  const handleSubmitRequest = () => {
+    setRefreshTrigger(prev => prev + 1);
   };
 
-  const handleUpdateStatus = (id: string, status: DeliveryRequest['status']) => {
-    setRequests(prev => 
-      prev.map(request => 
-        request.id === id 
-          ? { ...request, status, updatedAt: new Date() }
-          : request
-      )
+  const handleLoginSuccess = () => {
+    setCurrentView('admin');
+  };
+
+  // Show loading screen while checking auth state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="bg-primary-500 p-4 rounded-full mb-4 inline-block">
+            <i className="bi bi-truck text-white text-3xl"></i>
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Livraison Antalaha</h2>
+          <div className="flex items-center justify-center space-x-2">
+            <i className="bi bi-arrow-clockwise animate-spin text-primary-500"></i>
+            <span className="text-gray-600">Chargement...</span>
+          </div>
+        </div>
+      </div>
     );
+  }
 
-    // Show success message
-    const successMessage = document.createElement('div');
-    successMessage.className = 'fixed top-4 right-4 bg-blue-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300';
-    successMessage.innerHTML = `
-      <div class="flex items-center">
-        <i class="bi bi-check-circle mr-2"></i>
-        <span>Statut mis à jour avec succès!</span>
-      </div>
-    `;
-    document.body.appendChild(successMessage);
-    
-    window.setTimeout(() => {
-      successMessage.style.transform = 'translateX(0)';
-    }, 100);
-    
-    window.setTimeout(() => {
-      successMessage.style.transform = 'translateX(100%)';
-      window.setTimeout(() => {
-        document.body.removeChild(successMessage);
-      }, 300);
-    }, 3000);
-  };
+  // Show login form if trying to access admin without authentication
+  if (currentView === 'admin' && !user) {
+    return <LoginForm onLoginSuccess={handleLoginSuccess} />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 font-primary">
@@ -115,15 +61,20 @@ function App() {
             <RequestForm onSubmit={handleSubmitRequest} />
           </div>
         ) : (
-          <AdminDashboard 
-            requests={requests} 
-            onUpdateStatus={handleUpdateStatus}
-          />
+          <AdminDashboard key={refreshTrigger} />
         )}
       </main>
 
       <Footer />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 

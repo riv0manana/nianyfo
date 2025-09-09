@@ -1,4 +1,6 @@
 import React from 'react';
+import { useAuth } from '../contexts/AuthContext';
+import { logoutAdmin } from '../services/firebase';
 
 interface HeaderProps {
   currentView: 'user' | 'admin';
@@ -6,6 +8,17 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
+  const { user } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logoutAdmin();
+      onViewChange('user');
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
+
   return (
     <header className="bg-white shadow-lg border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -36,17 +49,39 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
               <i className="bi bi-person mr-2"></i>
               <span className="hidden sm:inline">Client</span>
             </button>
-            <button
-              onClick={() => onViewChange('admin')}
-              className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
-                currentView === 'admin'
-                  ? 'bg-accent-500 text-white shadow-lg'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              <i className="bi bi-speedometer2 mr-2"></i>
-              <span className="hidden sm:inline">Admin</span>
-            </button>
+            
+            {user ? (
+              <>
+                <button
+                  onClick={() => onViewChange('admin')}
+                  className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
+                    currentView === 'admin'
+                      ? 'bg-accent-500 text-white shadow-lg'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  <i className="bi bi-speedometer2 mr-2"></i>
+                  <span className="hidden sm:inline">Admin</span>
+                </button>
+                
+                <button
+                  onClick={handleLogout}
+                  className="px-4 py-2 rounded-lg font-medium bg-red-100 text-red-700 hover:bg-red-200 transition-all duration-300"
+                  title="Déconnexion"
+                >
+                  <i className="bi bi-box-arrow-right"></i>
+                  <span className="hidden sm:inline ml-2">Déconnexion</span>
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => onViewChange('admin')}
+                className="px-4 py-2 rounded-lg font-medium bg-gray-100 text-gray-700 hover:bg-gray-200 transition-all duration-300"
+              >
+                <i className="bi bi-shield-lock mr-2"></i>
+                <span className="hidden sm:inline">Admin</span>
+              </button>
+            )}
           </div>
         </div>
       </div>

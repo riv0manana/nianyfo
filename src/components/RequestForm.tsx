@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { categories } from '../data/categories';
 import { DeliveryRequest } from '../types';
+import { addDeliveryRequest } from '../services/firebase';
 
 interface RequestFormProps {
-  onSubmit: (request: Omit<DeliveryRequest, 'id' | 'createdAt' | 'updatedAt'>) => void;
+  onSubmit: () => void;
 }
 
 const RequestForm: React.FC<RequestFormProps> = ({ onSubmit }) => {
@@ -48,6 +49,56 @@ const RequestForm: React.FC<RequestFormProps> = ({ onSubmit }) => {
     return Object.keys(newErrors).length === 0;
   };
 
+  const showSuccessMessage = () => {
+    const successMessage = document.createElement('div');
+    successMessage.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300';
+    successMessage.innerHTML = `
+      <div class="flex items-center">
+        <i class="bi bi-check-circle mr-2"></i>
+        <span>Demande envoyée avec succès!</span>
+      </div>
+    `;
+    document.body.appendChild(successMessage);
+    
+    window.setTimeout(() => {
+      successMessage.style.transform = 'translateX(0)';
+    }, 100);
+    
+    window.setTimeout(() => {
+      successMessage.style.transform = 'translateX(100%)';
+      window.setTimeout(() => {
+        if (document.body.contains(successMessage)) {
+          document.body.removeChild(successMessage);
+        }
+      }, 300);
+    }, 3000);
+  };
+
+  const showErrorMessage = (message: string) => {
+    const errorMessage = document.createElement('div');
+    errorMessage.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform translate-x-full transition-transform duration-300';
+    errorMessage.innerHTML = `
+      <div class="flex items-center">
+        <i class="bi bi-exclamation-triangle mr-2"></i>
+        <span>${message}</span>
+      </div>
+    `;
+    document.body.appendChild(errorMessage);
+    
+    window.setTimeout(() => {
+      errorMessage.style.transform = 'translateX(0)';
+    }, 100);
+    
+    window.setTimeout(() => {
+      errorMessage.style.transform = 'translateX(100%)';
+      window.setTimeout(() => {
+        if (document.body.contains(errorMessage)) {
+          document.body.removeChild(errorMessage);
+        }
+      }, 300);
+    }, 3000);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -56,9 +107,7 @@ const RequestForm: React.FC<RequestFormProps> = ({ onSubmit }) => {
     setIsSubmitting(true);
 
     try {
-      await new Promise(resolve => window.setTimeout(resolve, 1000));
-      
-      onSubmit({
+      await addDeliveryRequest({
         ...formData,
         budget: parseFloat(formData.budget),
         status: 'pending'
@@ -74,8 +123,11 @@ const RequestForm: React.FC<RequestFormProps> = ({ onSubmit }) => {
       });
 
       setErrors({});
+      showSuccessMessage();
+      onSubmit();
     } catch (error) {
       console.error('Erreur lors de la soumission:', error);
+      showErrorMessage('Erreur lors de l\'envoi de la demande');
     } finally {
       setIsSubmitting(false);
     }
