@@ -2,12 +2,12 @@
 // This config file approach is recommended for better security and deployment flexibility
 
 // Environment variables for Firebase (replace with your actual values)
-const VITE_FIREBASE_API_KEY = "your-firebase-api-key-here";
-const VITE_FIREBASE_AUTH_DOMAIN = "your-project-id.firebaseapp.com";
-const VITE_FIREBASE_PROJECT_ID = "your-project-id-here";
-const VITE_FIREBASE_STORAGE_BUCKET = "your-project-id.appspot.com";
-const VITE_FIREBASE_MESSAGING_SENDER_ID = "your-messaging-sender-id-here";
-const VITE_FIREBASE_APP_ID = "your-app-id-here";
+const VITE_FIREBASE_API_KEY = import.meta.env.VITE_FIREBASE_API_KEY;
+const VITE_FIREBASE_AUTH_DOMAIN = import.meta.env.VITE_FIREBASE_AUTH_DOMAIN;
+const VITE_FIREBASE_PROJECT_ID = import.meta.env.VITE_FIREBASE_PROJECT_ID;
+const VITE_FIREBASE_STORAGE_BUCKET = import.meta.env.VITE_FIREBASE_STORAGE_BUCKET;
+const VITE_FIREBASE_MESSAGING_SENDER_ID = import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID;
+const VITE_FIREBASE_APP_ID = import.meta.env.VITE_FIREBASE_APP_ID;
 
 export const firebaseConfig = {
   apiKey: VITE_FIREBASE_API_KEY,
