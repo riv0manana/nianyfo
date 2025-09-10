@@ -29,10 +29,10 @@ const Header: React.FC<HeaderProps> = ({ currentView, onViewChange }) => {
             </div>
             <div>
               <h1 className="text-xl sm:text-2xl font-bold text-gray-900">
-                Livraison Antalaha
+                NianyFô
               </h1>
               <p className="text-sm text-gray-600 hidden sm:block">
-                Service de livraison communautaire
+                Votre coursier de confiance
               </p>
             </div>
           </div>

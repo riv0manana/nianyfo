@@ -11,12 +11,12 @@ const Footer: React.FC = () => {
                 <i className="bi bi-truck text-white text-xl"></i>
               </div>
               <div>
-                <h3 className="text-xl font-bold">Livraison Antalaha</h3>
-                <p className="text-gray-400 text-sm">Service communautaire</p>
+                <h3 className="text-xl font-bold">NianyFô</h3>
+                <p className="text-gray-400 text-sm">Votre coursier de confiance</p>
               </div>
             </div>
             <p className="text-gray-400 leading-relaxed">
-              Nous connectons Antalaha à Sambava pour vous faciliter la vie. 
+              Nous vous aidons. 
               Commandez ce dont vous avez besoin, nous nous occupons du reste.
             </p>
           </div>

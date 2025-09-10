@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Header from './components/Header';
 import RequestForm from './components/RequestForm';
@@ -27,7 +27,7 @@ function AppContent() {
           <div className="bg-primary-500 p-4 rounded-full mb-4 inline-block">
             <i className="bi bi-truck text-white text-3xl"></i>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Livraison Antalaha</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">NianyFô</h2>
           <div className="flex items-center justify-center space-x-2">
             <i className="bi bi-arrow-clockwise animate-spin text-primary-500"></i>
             <span className="text-gray-600">Chargement...</span>
