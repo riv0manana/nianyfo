@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { categories } from '../data/categories';
-import { DeliveryRequest } from '../types';
 import { addDeliveryRequest } from '../services/firebase';
 
 interface RequestFormProps {
@@ -153,7 +152,7 @@ const RequestForm: React.FC<RequestFormProps> = ({ onSubmit }) => {
         <div className="bg-gradient-to-r from-primary-500 to-primary-600 p-6 text-white">
           <h2 className="text-2xl font-bold mb-2">Nouvelle Demande</h2>
           <p className="text-primary-100">
-            Décrivez ce dont vous avez besoin et nous nous en occupons
+            Décrivez ce dont vous avez besoin avec détails et nous nous en occupons de chercher et faire l'achat
           </p>
         </div>
 

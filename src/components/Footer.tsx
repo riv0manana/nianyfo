@@ -16,25 +16,36 @@ const Footer: React.FC = () => {
               </div>
             </div>
             <p className="text-gray-400 leading-relaxed">
-              Nous vous aidons. 
-              Commandez ce dont vous avez besoin, nous nous occupons du reste.
+              Votre temps est précieux. Nous assurons de faire vos course à Sambava, et vous faire livrer le jour même
             </p>
           </div>
 
           <div>
             <h4 className="text-lg font-semibold mb-4">Contact</h4>
-            <div className="space-y-3">
+            <div className="space-y-3 mb-6">
               <div className="flex items-center text-gray-400">
                 <i className="bi bi-geo-alt mr-3"></i>
                 <span>Antalaha, Madagascar</span>
               </div>
               <div className="flex items-center text-gray-400">
                 <i className="bi bi-telephone mr-3"></i>
-                <span>+261 XX XX XXX XX</span>
+                <span>+261 38 51 007 62</span>
               </div>
               <div className="flex items-center text-gray-400">
                 <i className="bi bi-envelope mr-3"></i>
-                <span>contact@livraison-antalaha.mg</span>
+                <span>contact@riv0manana.dev</span>
+              </div>
+            </div>
+            
+
+            <div className="space-y-3">
+              <div className="flex items-center text-gray-400">
+                <i className="bi bi-geo-alt mr-3"></i>
+                <span>Sambava, Madagascar</span>
+              </div>
+              <div className="flex items-center text-gray-400">
+                <i className="bi bi-telephone mr-3"></i>
+                <span>+261 32 15 941 45</span>
               </div>
             </div>
           </div>
@@ -47,10 +58,6 @@ const Footer: React.FC = () => {
                 <span>8h - 17h</span>
               </div>
               <div className="flex justify-between">
-                <span>Samedi</span>
-                <span>8h - 12h</span>
-              </div>
-              <div className="flex justify-between">
                 <span>Dimanche</span>
                 <span>Fermé</span>
               </div>
@@ -58,19 +65,8 @@ const Footer: React.FC = () => {
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col sm:flex-row justify-between items-center">
-          <p className="text-gray-400 text-sm">
-            © 2024 Livraison Antalaha. Tous droits réservés.
-          </p>
-          <div className="flex items-center space-x-2 mt-4 sm:mt-0">
-            <span className="text-gray-400 text-sm">Powered by</span>
-            <div className="flex items-center space-x-1">
-              <div className="w-6 h-6 bg-gradient-to-r from-primary-500 to-accent-500 rounded-md flex items-center justify-center">
-                <i className="bi bi-lightning-charge text-white text-xs"></i>
-              </div>
-              <span className="text-white font-semibold">Websparks AI</span>
-            </div>
-          </div>
+        <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col sm:flex-row justify-center items-center">
+          NianyFô © 2024 riv0manana.dev
         </div>
       </div>
     </footer>

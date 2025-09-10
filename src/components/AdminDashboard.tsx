@@ -5,7 +5,7 @@ import { getDeliveryRequests, updateRequestStatus } from '../services/firebase';
 
 const AdminDashboard: React.FC = () => {
   const [requests, setRequests] = useState<DeliveryRequest[]>([]);
-  const [filter, setFilter] = useState<'all' | DeliveryRequest['status']>('all');
+  const [filter, setFilter] = useState<'all' | DeliveryRequest['status']>('pending');
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
 
@@ -248,7 +248,7 @@ const AdminDashboard: React.FC = () => {
           </div>
           
           <div className="flex gap-2 flex-wrap">
-            {(['all', 'pending', 'finding', 'delivering', 'completed'] as const).map((status) => (
+            {(['pending', 'finding', 'delivering', 'completed', 'all'] as const).map((status) => (
               <button
                 key={status}
                 onClick={() => setFilter(status)}

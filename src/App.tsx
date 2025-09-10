@@ -51,11 +51,10 @@ function AppContent() {
           <div>
             <div className="text-center mb-8 px-4">
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
-                Besoin de quelque chose de Sambava ?
+                Besoin de faire votre course à Sambava ?
               </h1>
               <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                Économisez votre temps et votre argent. Nous nous occupons de trouver et livrer 
-                tout ce dont vous avez besoin, le jour même.
+                Économisez votre temps et optimisez votre budget, pour seulement 5.000Ar, nous faisons votre course à Sambava et vous livre le même jour de 17h - 19h.
               </p>
             </div>
             <RequestForm onSubmit={handleSubmitRequest} />
